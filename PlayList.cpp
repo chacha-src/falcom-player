@@ -398,7 +398,7 @@ int CPlayList::Add(CString name,int sub,int loop1,int loop2,CString art,CString 
 		case 19:s="朱紅い雫";break;
 		case 20:s="海の檻歌";break;
 		case 21:s = "閃の軌跡Ⅰ,Ⅱ,Ys8"; break;
-		case -6:s = "閃Ⅲ,Ⅳ,創の軌跡,Ys9,YsX"; break;
+		case -6:s = "閃Ⅲ,Ⅳ,創,零改,Ys9,YsX"; break;
 		case -11:s="月影のラプソディー";break;
 		case -12:s="西風の狂詩曲";break;
 		case -13:s="アークトゥルス";break;
@@ -3381,6 +3381,38 @@ void CPlayList::Fol(CString fname)
 							a = "不明";
 							break;
 
+						}
+					}
+
+					a = fname.Right(fname.GetLength() - fname.ReverseFind('\\') - 1);
+					if (a.Left(3) == L"ed7") {
+						int b = _ttoi(a.Mid(3, 3));
+						CString fil = fname.Left(fname.ReverseFind(L'\\')) + L"\\..\\..\\data\\bgm\\info.yaml";
+						FILE* fp;
+						errno_t ferr;
+						ferr = _tfopen_s(&fp, fil, _T("r, ccs=UTF-8"));
+						if (ferr == 0) {
+							CStdioFile fzero(fp);
+							fzero.SeekToBegin();
+							CString stf, stl, stn;
+							BOOL ck = FALSE;
+							for (;;) {
+								if (fzero.ReadString(stf) == FALSE) break;
+								stl.Format(L"'%d'", b);
+								if (stf.Find(stl) != -1) {
+									ck = TRUE;
+								}
+								if (stf.Find(L"jp:") != -1 && ck == TRUE) {
+									int k = stf.Find(L"jp:") + 4;
+									stn = stf.Mid(k);
+									break;
+								}
+							}
+							if (stn != L"") {
+								a = stn;
+							}
+							fzero.Close();
+							fclose(fp);
 						}
 					}
 					_tcscpy(p.name, a);
