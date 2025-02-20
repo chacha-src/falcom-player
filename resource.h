@@ -64,11 +64,11 @@
 #define IDD_AUDIOSELECT                 177
 #define IDD_DIALOG2                     178
 #define IDD_PVI                         178
-#define IDD_IMAGE                       179
 #define CG_IDR_POPUP_DOUGA1             180
 #define IDD_ZEROFOL                     180
 #define IDD_IMAGEBASE                   181
 #define IDD_PLAYLIST_NEW                189
+#define IDD_IMAGE                       191
 #define IDC_STATIC11                    1000
 #define IDC_BUTTON1                     1001
 #define IDC_BUTTON5                     1002
@@ -221,7 +221,6 @@
 #define IDC_FONT                        1072
 #define IDC_FONT2                       1073
 #define IDC_BUTTON58                    1073
-#define IDC_STATIC1                     1074
 #define IDC_STATIC_OS                   1075
 #define IDC_STATICido                   1076
 #define IDC_STATIC_OS2                  1076
@@ -235,6 +234,7 @@
 #define IDC_COMBO3                      1081
 #define IDC_PLAYDELETE                  1081
 #define IDC_STATIC12                    1082
+#define IDC_STATIC1                     1082
 #define ID_MENUITEM32771                32771
 #define ID_MENUITEM32772                32772
 #define ID_MENUITEM32773                32773
@@ -415,9 +415,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        191
+#define _APS_NEXT_RESOURCE_VALUE        193
 #define _APS_NEXT_COMMAND_VALUE         32948
-#define _APS_NEXT_CONTROL_VALUE         1082
+#define _APS_NEXT_CONTROL_VALUE         1083
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

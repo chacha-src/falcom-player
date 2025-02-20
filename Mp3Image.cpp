@@ -77,6 +77,8 @@ float hD1;
 //D2D1HwndRenderTarget* pRenderTarget = NULL;
 int fff = 0;
 
+extern save savedata;
+
 BOOL CMp3Image::OnInitDialog()
 {
 	CDialog::OnInitDialog();
@@ -107,9 +109,6 @@ BOOL CMp3Image::OnInitDialog()
 	}
 */
 	m_pDlgColor = NULL;
-
-
-
 
 
 	nnn=1;
@@ -162,9 +161,10 @@ extern int oggf;
 //extern TCHAR karento2[1024];
 void CMp3Image::OnPaint()
 {
-	if (fff == 1) return;
-	fff = 1;
-
+	if (savedata.aero) {
+		if (fff == 1) return;
+		fff = 1;
+	}
 	CPaintDC dcc(this); // 描画用のデバイス コンテキスト
 /*	if (IsIconic())
 	{
@@ -187,18 +187,40 @@ void CMp3Image::OnPaint()
 */		//if(plf!=0) 
 	CRect rect;
 	GetClientRect(&rect);
-	CBrush brush(RGB(255, 0, 0));
-	GetDC()->FillRect(&rect, &brush);
+	if (savedata.aero) {
+		CBrush brush(RGB(255, 0, 0));
+		dcc.FillRect(&rect, &brush);
+	}
+	else {
+		CBrush brush(RGB(0, 0, 0));
+		dcc.FillRect(&rect, &brush);
+	}
 
 	RECT r;
 	GetClientRect(&r);
-#if 0
+#if 1
 	//			r.right = r.bottom * xy;
 	SetStretchBltMode(dcc.m_hDC, HALFTONE); //高画質モード
 	SetBrushOrgEx(dcc.m_hDC, 0, 0, NULL); //ブラシのずれを防止
 	dcc.StretchBlt(0, 0, (r.right - 100) * (xy), r.bottom, &dc, 0, 0, x, y, SRCCOPY); //伸縮
 #endif
+	//	m_x.MoveWindow((int)(rect.right - 50 * hD1), (int)(110 * hD1), (int)(50 * hD1), (int)(50 * hD1));
+	//m_y.MoveWindow((int)(rect.right - 50 * hD1), (int)(140 * hD1), (int)(50 * hD1), (int)(50 * hD1));
+	CString str;
 
+	if (savedata.aero == 0) {
+		SetTextColor(dcc, RGB(255, 255, 255));
+		SetBkColor(dcc, RGB(0, 0, 0));
+	} else {
+		SetTextColor(dcc, RGB(0, 0, 0));
+		SetBkColor(dcc, RGB(255, 0, 0));
+	}
+	SetBkMode(dcc, TRANSPARENT);
+	str.Format(L"X: %5d", x);
+	dcc.TextOut((int)(rect.right - 50 * hD1), (int)(110 * hD1), str);
+	str.Format(L"Y: %5d", y);
+	dcc.TextOut((int)(rect.right - 50 * hD1), (int)(140 * hD1), str);
+#if 0 
 	ULONG_PTR gdiplusToken;
 	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 
@@ -239,6 +261,7 @@ void CMp3Image::OnPaint()
 
 	// Finalize GDI+
 	Gdiplus::GdiplusShutdown(gdiplusToken);
+#endif
 
 	CDialog::OnPaint();
 //	Sleep(100);
@@ -249,34 +272,34 @@ int ip2 = 0;
 extern int flacmode;
 void CMp3Image::Load(CString s)
 {
-	CString s1,s2;
+	CString s1, s2;
 	TCHAR env[256];
-	GetEnvironmentVariable(_T("temp"),env,sizeof(env));
-	s1=env;s1+="\\";
-	s2=s1;
+	GetEnvironmentVariable(_T("temp"), env, sizeof(env));
+	s1 = env; s1 += "\\";
+	s2 = s1;
 
-	char *cBit;
-	HGLOBAL hG=NULL;
-	IStream *stream;
+	char* cBit;
+	HGLOBAL hG = NULL;
+	IStream* stream;
 
 	CFile ff;
-	if(ff.Open(s,CFile::modeRead|CFile::shareDenyNone,NULL)==FALSE){
+	if (ff.Open(s, CFile::modeRead | CFile::shareDenyNone, NULL) == FALSE) {
 		DestroyWindow();
 		return;
 	}
 	UINT size;
 	ULONGLONG i, enc;
 	s.MakeLower();
-	if (s.Right(3) == "mp3"){
+	if (s.Right(3) == "mp3") {
 		ZeroMemory(bufimage, 2005);
 		ff.Read(bufimage, 2005);
 		if (bufimage[0x14] == 0 || bufimage[0x14] == 3) enc = 0; else enc = 1;
-		for (i = 0; i < 2000; i++){
-			if (bufimage[i] == 0x41 && bufimage[i + 1] == 0x50 && bufimage[i + 2] == 0x49 && bufimage[i + 3] == 0x43){
+		for (i = 0; i < 2000; i++) {
+			if (bufimage[i] == 0x41 && bufimage[i + 1] == 0x50 && bufimage[i + 2] == 0x49 && bufimage[i + 3] == 0x43) {
 				break;
 			}
 		}
-		if (i == 2000){
+		if (i == 2000) {
 			DestroyWindow();
 			return;
 		}
@@ -290,31 +313,31 @@ void CMp3Image::Load(CString s)
 		enc = bufimage[i + 10];
 		i += (4 + 4 + 3 + 6);
 		int flg = 0;
-		if (bufimage[i] == 'p'){ s1 += _T("111.png"); }
+		if (bufimage[i] == 'p') { s1 += _T("111.png"); }
 		else { s1 += _T("111.jpg"); }
 		s2 += _T("111.bmp");
-		for (; i<2000; i++){
+		for (; i < 2000; i++) {
 			if (bufimage[i] == 0)
 				break;
 		}
 		i += 2;
 
-		if ((bufimage[i] == 0xff || bufimage[i] == 0xfe)){
-			for (; i<2000; i++){
-				if (enc == 1){
-					if (bufimage[i] == 0 && bufimage[i + 1] == 0){
+		if ((bufimage[i] == 0xff || bufimage[i] == 0xfe)) {
+			for (; i < 2000; i++) {
+				if (enc == 1) {
+					if (bufimage[i] == 0 && bufimage[i + 1] == 0) {
 						if (bufimage[i + 1] == 0 && bufimage[i + 2] == 0)
 							flg = 1;
 						break;
 					}
 				}
-				else{
+				else {
 					if (bufimage[i] == 0)
 						flg = 1;
 					break;
 				}
 			}
-			if (i == 2000){
+			if (i == 2000) {
 				DestroyWindow();
 				return;
 			}
@@ -324,16 +347,16 @@ void CMp3Image::Load(CString s)
 		}
 		else i++;
 	}
-	else if (s.Right(3) == "m4a"){
+	else if (s.Right(3) == "m4a") {
 		ZeroMemory(bufimage, sizeof(bufimage));
 		ff.Read(bufimage, sizeof(bufimage));
 		if (bufimage[0x14] == 0 || bufimage[0x14] == 3) enc = 0; else enc = 1;
-		for (i = 0; i < 0x300000; i++){// 00 06 5D 6A 64 61 74 61
-			if (bufimage[i] == 0x63 && bufimage[i + 1] == 0x6f && bufimage[i + 2] == 0x76 && bufimage[i + 3] == 0x72 && bufimage[i + 8] == 0x64 && bufimage[i + 9] == 0x61 && bufimage[i + 10] == 0x74 && bufimage[i + 11] == 0x61){
+		for (i = 0; i < 0x300000; i++) {// 00 06 5D 6A 64 61 74 61
+			if (bufimage[i] == 0x63 && bufimage[i + 1] == 0x6f && bufimage[i + 2] == 0x76 && bufimage[i + 3] == 0x72 && bufimage[i + 8] == 0x64 && bufimage[i + 9] == 0x61 && bufimage[i + 10] == 0x74 && bufimage[i + 11] == 0x61) {
 				break;
 			}
 		}
-		if (i == 0x300000){
+		if (i == 0x300000) {
 			DestroyWindow();
 			return;
 		}
@@ -348,35 +371,36 @@ void CMp3Image::Load(CString s)
 		size -= 16;
 
 		i += 16;
-		if (bufimage[i + 1] == 0x50 && bufimage[i + 2] == 0x4e && bufimage[i + 3] == 0x47){
+		if (bufimage[i + 1] == 0x50 && bufimage[i + 2] == 0x4e && bufimage[i + 3] == 0x47) {
 			s1 += _T("111.png");
-		}else{
+		}
+		else {
 			s1 += _T("111.jpg");
 		}
 		s2 += _T("111.bmp");
 	}
-	else if (s.Right(3) == "ogg" || s.Right(6) == ".qull3"){
+	else if (s.Right(3) == "ogg" || s.Right(6) == ".qull3") {
 		CString cc;
 		int vfiii = FALSE;
-		for (int iii = 0; iii < vf.vc->comments; iii++){
+		for (int iii = 0; iii < vf.vc->comments; iii++) {
 #if _UNICODE
-			WCHAR *f; f = new WCHAR[0x300000];
+			WCHAR* f; f = new WCHAR[0x300000];
 			MultiByteToWideChar(CP_UTF8, 0, vf.vc->user_comments[iii], -1, f, 0x300000);
 			cc = f;
-			delete [] f;
+			delete[] f;
 #else
 			cc = vf.vc->user_comments[iii];
 #endif
-			if (cc.Left(23) == "METADATA_BLOCK_PICTURE="){
+			if (cc.Left(23) == "METADATA_BLOCK_PICTURE=") {
 				vfiii = TRUE;
-				char *buf = vf.vc->user_comments[iii];
+				char* buf = vf.vc->user_comments[iii];
 				buf += 23;//Base64
 				int len;
-				char *decode = b64_decode(buf, strlen(buf),len);
-				if (decode[16 + 16 + 10] == 0x50 && decode[1 + 16 + 16 + 10] == 0x4e && decode[2 + 16 + 16 + 10] == 0x47){
+				char* decode = b64_decode(buf, strlen(buf), len);
+				if (decode[16 + 16 + 10] == 0x50 && decode[1 + 16 + 16 + 10] == 0x4e && decode[2 + 16 + 16 + 10] == 0x47) {
 					s1 += _T("111.png");
 				}
-				else{
+				else {
 					s1 += _T("111.jpg");
 					decode += 1;
 				}
@@ -398,7 +422,7 @@ void CMp3Image::Load(CString s)
 				break;
 			}
 		}
-		if (vfiii == FALSE){
+		if (vfiii == FALSE) {
 			DestroyWindow();
 			return;
 		}
@@ -441,7 +465,7 @@ void CMp3Image::Load(CString s)
 		i += 4;
 		s2 += _T("111.bmp");
 	}
-	else if (s.Right(3) == "dsf"|| s.Right(3) == "dff") {
+	else if (s.Right(3) == "dsf" || s.Right(3) == "dff") {
 		CString tagfile, tagname, tagalbum;
 		CFile f; f.Open(s, CFile::modeRead | CFile::shareDenyNone);
 		f.Seek((ULONGLONG)po, CFile::begin);
@@ -476,12 +500,12 @@ void CMp3Image::Load(CString s)
 		size <<= 8;
 		size |= (UINT)bufimage[i + 3];
 
-		i += 4+po+16;
+		i += 4 + po + 16;
 		s2 += _T("111.bmp");
 
 	}
 
-	if (!(s.Right(3) == "ogg" || s.Right(6) == ".qull3")){
+	if (!(s.Right(3) == "ogg" || s.Right(6) == ".qull3")) {
 		//int ijk = i;
 		//CFile fff;
 		//if (fff.Open(s1, CFile::modeCreate | CFile::modeWrite, NULL) == FALSE){
@@ -499,7 +523,7 @@ void CMp3Image::Load(CString s)
 		hG = GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, size);
 		ff.SeekToBegin();
 		ff.Seek(i, CFile::begin);
-		char *cBit = new char[size];
+		char* cBit = new char[size];
 		ff.Read(cBit, size);
 		ff.Close();
 		if (s.Right(6).MakeLower() == L"qull3h" && flacmode == 1) {
@@ -523,22 +547,22 @@ void CMp3Image::Load(CString s)
 		DestroyWindow();
 		return;
 	}
-	y=img.GetHeight();
-	x=img.GetWidth();
-//	if(img.Save(s2)!=S_OK){MessageBox(_T("プログラムにバグがあるか未対応形式です。"));
-//	GlobalFree(hG);
-//	DestroyWindow();
-//			return;}
-	//CFile::Remove(s1);
-	//bmpsub = CBitmap::FromHandle(img);
-//	HBITMAP hbmp = (HBITMAP)::LoadImage(
-//    NULL, s2, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION );
+	y = img.GetHeight();
+	x = img.GetWidth();
+	//	if(img.Save(s2)!=S_OK){MessageBox(_T("プログラムにバグがあるか未対応形式です。"));
+	//	GlobalFree(hG);
+	//	DestroyWindow();
+	//			return;}
+		//CFile::Remove(s1);
+		//bmpsub = CBitmap::FromHandle(img);
+	//	HBITMAP hbmp = (HBITMAP)::LoadImage(
+	//    NULL, s2, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION );
 	dc.CreateCompatibleDC(NULL);
-//	bmpsub = CBitmap::FromHandle( hbmp );
+	//	bmpsub = CBitmap::FromHandle( hbmp );
 	bmp1.CreateCompatibleBitmap(cdc0, img.GetWidth(), img.GetHeight());
 	dc.SelectObject(&bmp1);
 	img.BitBlt(dc.m_hDC, 0, 0);
-//	dc.BitBlt(0, 0, img.GetWidth(), img.GetHeight(), img., 0, 0, SRCCOPY);
+	//	dc.BitBlt(0, 0, img.GetWidth(), img.GetHeight(), img., 0, 0, SRCCOPY);
 
 	xy = (double)img.GetWidth() / (double)img.GetHeight();
 
@@ -547,21 +571,21 @@ void CMp3Image::Load(CString s)
 	//CFile::Remove(s2);
 
 	CString str;
-	str.Format(_T("X: %4d"),x);
+	str.Format(_T("X: %4d"), x);
 	m_x.SetWindowText(str);
-	str.Format(_T("Y: %4d"),y);
+	str.Format(_T("Y: %4d"), y);
 	m_y.SetWindowText(str);
 	// window枠の大きさと位置設定
 	RECT rect;
 	GetWindowRect(&rect);
 	// windowの横の大きさを計算
 
-	SetWindowPos(NULL, 0, 0, rect.right +100, rect.bottom, SWP_NOMOVE | SWP_NOZORDER);
+	SetWindowPos(NULL, 0, 0, rect.right + 100, rect.bottom, SWP_NOMOVE | SWP_NOZORDER);
 	// 大きさ変更後の位置を獲得
 	GetWindowRect(&rect);
 	GetWindowRect(&grect);
 	rcm.top = 0; rcm.left = 0; rcm.right = grect.right; rcm.bottom = grect.bottom;
-	int x2 , y2;
+	int x2, y2;
 	RECT deskrc;
 	int x1, y1;
 	// 画面中央へ配置
@@ -570,7 +594,7 @@ void CMp3Image::Load(CString s)
 	x1 = (x2 - (rect.right - rect.left)) / 2;
 	y1 = (y2 - (rect.bottom - rect.top)) / 2;
 
-	SetWindowPos(NULL, x1, y1, (rect.bottom - rect.top) , (rect.bottom - rect.top), SWP_SHOWWINDOW);
+	SetWindowPos(NULL, x1, y1, (rect.bottom - rect.top), (rect.bottom - rect.top), SWP_SHOWWINDOW);
 	// 閉じる、x、yの表示位置を変更
 	GetClientRect(&rect);
 	rcm.top = 0; rcm.left = 0; rcm.right = rect.right; rcm.bottom = rect.bottom;
@@ -580,12 +604,16 @@ void CMp3Image::Load(CString s)
 
 	RECT r;
 	GetWindowRect(&r);
-	jake->MoveWindow(&r);
-	jake->ShowWindow(SW_SHOW);
-	SetWindowPos(jake, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER);
-	::SetWindowPos(jake->m_hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+	if (savedata.aero == 1) {
+		jake->MoveWindow(&r);
+		jake->ShowWindow(SW_SHOW);
+		SetWindowPos(jake, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER);
+		::SetWindowPos(jake->m_hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		SetTimer(4923, 10, NULL);
+	}
+
 	::SetWindowPos(this->m_hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-	SetTimer(4923, 10, NULL);
+
 	//	xy = (double)r.right / (double)grect.right;
 	Invalidate(FALSE);
 //	InvalidateRect(&rect,FALSE);
@@ -596,11 +624,13 @@ void CMp3Image::Load(CString s)
 
 
 extern save savedata;
-int CMp3Image::Create(CWnd *pWnd)
+int CMp3Image::Create(CWnd* pWnd)
 {
-	 m_pParent = NULL;
-	const BOOL bret = CDialog::Create( CMp3Image::IDD, this);
-	// ウィンドウの拡張スタイルを変更
+	m_pParent = NULL;
+	const BOOL bret = CDialog::Create(CMp3Image::IDD, this);
+
+	if (savedata.aero == 1) {
+		// ウィンドウの拡張スタイルを変更
 		ModifyStyleEx(0, WS_EX_LAYERED);
 
 		// レイヤードウィンドウの不透明度と透明のカラーキー
@@ -608,10 +638,9 @@ int CMp3Image::Create(CWnd *pWnd)
 
 		// 赤色のブラシを作成する．
 		m_brDlg.CreateSolidBrush(RGB(255, 0, 0));
+	}
     if( bret == TRUE)
         ShowWindow( SW_SHOW);
-	if (jake)
-		jake->ShowWindow(SW_HIDE);
     return bret;
 }
 
@@ -629,7 +658,8 @@ BOOL CMp3Image::DestroyWindow()
 	// TODO: ここに特定なコードを追加するか、もしくは基本クラスを呼び出してください。
 	img.Destroy();
 	BOOL rr=CDialog::DestroyWindow();
-	jake->DestroyWindow();
+	if(savedata.aero == 1)
+		jake->DestroyWindow();
 	mi=NULL;
 	if(nnn)
 		delete this;
@@ -711,11 +741,13 @@ void CMp3Image::OnSizing(UINT fwSide, LPRECT pRect)
 	m_y.MoveWindow((int)(rrr.right - 50.0f * hD1), (int)(140.0f * hD1), (int)(50.0f * hD1), (int)(50.0f * hD1));
 	//SetWindowPos(NULL, 0,0,pRect->right, pRect->bottom,   SWP_NOMOVE|SWP_NOOWNERZORDER);
 	GetWindowRect(&rrr);
-	if(jake)
-	jake->MoveWindow(&rrr);
+	if (savedata.aero == 1) {
+		if (jake)
+			jake->MoveWindow(&rrr);
 
-	::SetWindowPos(jake->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-	::SetWindowPos(jake->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		::SetWindowPos(jake->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		::SetWindowPos(jake->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+	}
 	::SetWindowPos(this->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 	::SetWindowPos(this->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
@@ -764,8 +796,8 @@ void CMp3Image::OnMouseMove(UINT nFlags, CPoint point)
 		SetWindowPos(NULL, rect.left, rect.top,
 			rect.right - rect.left, rect.bottom - rect.top,
 			SWP_NOOWNERZORDER);
-		if(jake)
-		jake->MoveWindow(&rect);
+		if(savedata.aero == 1)
+			jake->MoveWindow(&rect);
 
 	}
 	CDialog::OnMouseMove(nFlags, point);
@@ -787,8 +819,10 @@ void CMp3Image::OnRButtonDown(UINT nFlags, CPoint point)
 		this            	//このメニューを所有するウィンドウ
 		);
 	menu.DestroyMenu();
-	::SetWindowPos(jake->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-	::SetWindowPos(jake->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+	if (savedata.aero == 1) {
+		::SetWindowPos(jake->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		::SetWindowPos(jake->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+	}
 	::SetWindowPos(this->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 	::SetWindowPos(this->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
@@ -806,12 +840,16 @@ HBRUSH CMp3Image::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 		if (nCtlColor == CTLCOLOR_DLG)
 		{
-			return m_brDlg;
+			if (savedata.aero == 1) {
+				return m_brDlg;
+			}
 		}
 		if (nCtlColor == CTLCOLOR_STATIC)
 		{
-			SetBkMode(pDC->m_hDC, TRANSPARENT);
-			return m_brDlg;
+			if (savedata.aero == 1) {
+				SetBkMode(pDC->m_hDC, TRANSPARENT);
+				return m_brDlg;
+			}
 		}
 
 	return hbr;
@@ -865,7 +903,7 @@ void CMp3Image::OnTimer(UINT_PTR nIDEvent)
 	if (nIDEvent == 4923) {
 		KillTimer(4923);
 		if (ip2 != 0) return;
-		if (jake)
+		if (savedata.aero == 1)
 			::SetWindowPos(jake->m_hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 		::SetWindowPos(m_hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 		SetTimer(4930, 10, NULL);
@@ -874,7 +912,7 @@ void CMp3Image::OnTimer(UINT_PTR nIDEvent)
 	if (nIDEvent == 4924) {
 		KillTimer(4924);
 		if (ip2 != 0) return;
-		if (jake)
+		if (savedata.aero == 1)
 			::SetWindowPos(jake->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 		::SetWindowPos(m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 		SetTimer(4930, 10, NULL);
@@ -886,5 +924,7 @@ void CMp3Image::OnTimer(UINT_PTR nIDEvent)
 			KillTimer(4930);
 		}
 	}
+
+
 	CDialog::OnTimer(nIDEvent);
 }

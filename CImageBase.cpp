@@ -43,10 +43,12 @@ END_MESSAGE_MAP()
 
 // CImageBase メッセージ ハンドラー
 
-
+extern save savedata;
 BOOL CImageBase::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+
+	if (savedata.aero == 0) { ShowWindow(SW_HIDE); return TRUE; }
 
 	// TODO: ここに初期化を追加してください
 	COSVersion os;
