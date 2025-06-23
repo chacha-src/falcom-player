@@ -1427,38 +1427,41 @@ public:
 	}
 	void Close(void)
 	{
-		if (buf2) { free(buf2); buf2 = NULL; }
-		m_dwBytesDecoded = 0;
-		m_dwSkipRemain = 0;
-		m_ringbuf.Reset();
-		m_clipped = 0;
-		m_clipping = 0;
-		m_dwBufLen = 0;
-		if (m_hFile != INVALID_HANDLE_VALUE) {
-			CloseHandle(m_hFile);
-			m_hFile = INVALID_HANDLE_VALUE;
-			mad_header_finish(&m_header2);
-			mad_stream_finish(&m_stream2);
-			mad_frame_finish(&m_frame2);
-			mad_synth_finish(&m_synth2);
-			mad_header_finish(&m_header);
-			mad_stream_finish(&m_stream);
-			mad_frame_finish(&m_frame);
-			mad_synth_finish(&m_synth);
-			ZeroMemory(&m_stream2, sizeof(m_stream2));
-			ZeroMemory(&m_header2, sizeof(m_header2));
-			ZeroMemory(&m_frame2, sizeof(m_frame2));
-			ZeroMemory(&m_synth2, sizeof(m_synth2));
-			ZeroMemory(&m_mp3info, sizeof(m_mp3info));
-			ZeroMemory(&m_left_dither, sizeof(m_left_dither));
-			ZeroMemory(&m_right_dither, sizeof(m_right_dither));
+		try {
+			if (buf2) { free(buf2); buf2 = NULL; }
+			m_dwBytesDecoded = 0;
+			m_dwSkipRemain = 0;
+			m_ringbuf.Reset();
 			m_clipped = 0;
 			m_clipping = 0;
+			m_dwBufLen = 0;
+			if (m_hFile != INVALID_HANDLE_VALUE) {
+				CloseHandle(m_hFile);
+				m_hFile = INVALID_HANDLE_VALUE;
+				mad_header_finish(&m_header2);
+				mad_stream_finish(&m_stream2);
+				mad_frame_finish(&m_frame2);
+				mad_synth_finish(&m_synth2);
+				mad_header_finish(&m_header);
+				mad_stream_finish(&m_stream);
+				mad_frame_finish(&m_frame);
+				mad_synth_finish(&m_synth);
+				ZeroMemory(&m_stream2, sizeof(m_stream2));
+				ZeroMemory(&m_header2, sizeof(m_header2));
+				ZeroMemory(&m_frame2, sizeof(m_frame2));
+				ZeroMemory(&m_synth2, sizeof(m_synth2));
+				ZeroMemory(&m_mp3info, sizeof(m_mp3info));
+				ZeroMemory(&m_left_dither, sizeof(m_left_dither));
+				ZeroMemory(&m_right_dither, sizeof(m_right_dither));
+				m_clipped = 0;
+				m_clipping = 0;
+			}
+			//		if(m_hNotification != INVALID_HANDLE_VALUE){
+			//			FindCloseChangeNotification(m_hNotification);
+			//			m_hNotification = INVALID_HANDLE_VALUE;
+			//		}
 		}
-		//		if(m_hNotification != INVALID_HANDLE_VALUE){
-		//			FindCloseChangeNotification(m_hNotification);
-		//			m_hNotification = INVALID_HANDLE_VALUE;
-		//		}
+		catch (...) {}
 	}
 
 	float fade;

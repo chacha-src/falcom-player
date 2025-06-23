@@ -379,7 +379,7 @@ CString COSVersion::GetVersionString()
 				&edition)) {
 				if (in.dwMinorVersion == 0) {
 					if(in.dwBuildNumber>= 22000)
-						if (in.dwBuildNumber >= 25000)
+						if (in.dwBuildNumber >= 28000)
 							ss = _T("Windows 12");
 						else
 							ss = _T("Windows 11");

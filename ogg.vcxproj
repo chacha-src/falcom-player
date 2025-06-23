@@ -904,6 +904,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalOptions>/NODEFAULTLIB:library %(AdditionalOptions)</AdditionalOptions>
+      <HeapReserveSize>8000000000</HeapReserveSize>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -2280,8 +2281,7 @@
       <UACExecutionLevel>AsInvoker</UACExecutionLevel>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <HeapReserveSize>
-      </HeapReserveSize>
+      <HeapReserveSize>80000000</HeapReserveSize>
       <HeapCommitSize>
       </HeapCommitSize>
       <LargeAddressAware>true</LargeAddressAware>

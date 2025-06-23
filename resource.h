@@ -217,10 +217,14 @@
 #define IDC_Link                        1069
 #define IDC_STATICds2                   1069
 #define IDC_STATICin2                   1070
+#define IDC_SLIDER7                     1070
 #define ID_OK                           1071
+#define IDC_STATICds3                   1071
 #define IDC_FONT                        1072
+#define IDC_SLIDER8                     1072
 #define IDC_FONT2                       1073
 #define IDC_BUTTON58                    1073
+#define IDC_STATICds4                   1074
 #define IDC_STATIC_OS                   1075
 #define IDC_STATICido                   1076
 #define IDC_STATIC_OS2                  1076
@@ -230,7 +234,9 @@
 #define IDC_STATIC_OS4                  1078
 #define IDC_STATIC_LRC                  1078
 #define IDC_STATIC10                    1079
+#define IDC_STATIC_LRC2                 1079
 #define IDC_COMBO2                      1080
+#define IDC_STATIC_LRC3                 1080
 #define IDC_COMBO3                      1081
 #define IDC_PLAYDELETE                  1081
 #define IDC_STATIC12                    1082

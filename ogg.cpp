@@ -12,6 +12,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+#include "rubberband/RubberBandStretcher.h"
 /////////////////////////////////////////////////////////////////////////////
 // COggApp
 
@@ -58,7 +59,7 @@ BOOL CALLBACK ew(HWND hwnd,LPARAM lParam) {
 		::PostMessage(hwnd,WM_APP +1, (WPARAM)NULL, (LPARAM)NULL);
 	return FALSE;
 }
-#include "OSVersion.h"
+
 BOOL COggApp::InitInstance()
 {
 //	INITCOMMONCONTROLSEX InitCtrls;
@@ -153,7 +154,7 @@ BOOL COggApp::InitInstance()
 	savedata.samples = 192000;
 	savedata.wup = 1.0;
 	savedata.aerocheck = 0;
-	savedata.playlistnum = 0;
+
 #if _UNICODE
 	if(GetKeyState(VK_CONTROL) < 0){
 		if(AfxMessageBox(L"ANSI版からのコンバートを行いますか？",MB_YESNO)==IDYES){
@@ -186,11 +187,8 @@ BOOL COggApp::InitInstance()
 #endif
 	if (savedata.ms < 30) savedata.ms = 30;
 	if (savedata.ms > 80) savedata.ms = 80;
-	COSVersion os;
-	os.GetVersionString();
-	if(os.in.dwMajorVersion >= 6)
 	if (savedata.aerocheck == 0) {
-		int abc = AfxMessageBox(L"エアロ(透過処理)がメイン画面等に実装されました。是非試してみて貰えれば。\n有効にしますか？(少し不安定な部分あります)\n(このメッセージは一回しか表示されません)\nもし表示がおかしく強制的にOFFにしたい場合は、SHIFT押しながら実行して下さい\n(設定から変更できますが、設定開けないとき用)", MB_YESNO);
+		int abc = AfxMessageBox(L"エアロ(透過処理)がメイン画面等に実装されました。是非試してみて貰えれば。\n有効にしますか？(少し不安定な部分あります)\n(このメッセージは一回しか表示されません)", MB_YESNO);
 		if (abc == IDYES) {
 			savedata.aero = 1;
 			savedata.aerocheck = 1;
@@ -200,18 +198,7 @@ BOOL COggApp::InitInstance()
 			savedata.aerocheck = 1;
 		}
 	}
-	if (GetKeyState(VK_SHIFT) < 0) {
-		if (AfxMessageBox(L"設定のエアロ(透過処理)機能をを切りますか？", MB_YESNO) == IDYES) {
-			savedata.aero = 0;
-		}
-	}
-	if (os.in.dwMajorVersion <= 5) {
-		savedata.aero = 0;
-		savedata.aerocheck = 0;
-	}
-
-
-		_tchdir(karento2);
+	_tchdir(karento2);
 #if _UNICODE
 	if (ab.Open(L"oggYSEDbgmu.dat", CFile::modeCreate | CFile::modeWrite, NULL) == TRUE) {
 #else
@@ -520,3 +507,9 @@ void COggApp::convert()
 {
 }
 #endif
+
+// RubberBand関連のグローバル変数の定義
+RubberBand::RubberBandStretcher* g_rubberBandStretcher = NULL;
+std::vector<float> m_convertedPcmFloatData;
+std::vector<uint8_t> m_bufwav3_1;
+std::vector<float> inputFloatData;

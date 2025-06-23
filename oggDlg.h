@@ -14,7 +14,12 @@
 #include "afxwin.h"
 #include "afxcmn.h"
 #include "atlimage.h"
+#include <vector>
 #include "afxwin.h"
+
+#include <cstddef>
+
+
 class COggDlg : public CDialog
 {
 // ç\íz
@@ -54,6 +59,7 @@ public:
 	void WASAPIChange(WAVEFORMATEX* pwfx);
 	static UINT wavread(LPVOID);
 	CEvent timer;
+
 #if _UNICODE
 	void _CreateShellLink(LPWSTR pszArguments, LPWSTR pszTitle, IShellLink **ppsl, int iconindex, bool WA,BOOL wa2=TRUE);
 #else
@@ -253,6 +259,12 @@ public:
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
 	afx_msg BOOL OnNcActivate(BOOL bActive);
 	CStatic m_lrc;
+	CSliderCtrl m_tempo_sl;
+	CStatic m_temp_num;
+	CStatic m_lrc2;
+	CStatic m_lrc3;
+	CStatic m_pitch;
+	CSliderCtrl m_pitch_sl;
 };
 
 //{{AFX_INSERT_LOCATION}}
