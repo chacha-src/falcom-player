@@ -7,7 +7,10 @@
 #include "CImageBase.h"
 
 #include "OSVersion.h"
+#include <dwmapi.h>
+#include <afxcmn.h>
 
+#pragma comment(lib, "dwmapi.lib")
 // CImageBase ダイアログ
 
 IMPLEMENT_DYNAMIC(CImageBase, CDialogEx)
@@ -49,11 +52,11 @@ BOOL CImageBase::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	if (savedata.aero == 0) { ShowWindow(SW_HIDE); return TRUE; }
-
-	// TODO: ここに初期化を追加してください
 	COSVersion os;
 	os.GetVersionString();
-	if (os.in.dwMajorVersion >= 10 && os.in.dwBuildNumber >= 18363)
+	if (os.in.dwMajorVersion == 10 && os.in.dwBuildNumber >= 22000) { ShowWindow(SW_HIDE); return TRUE; }
+	// TODO: ここに初期化を追加してください
+	if (os.in.dwMajorVersion == 10 && os.in.dwBuildNumber < 22000 && os.in.dwBuildNumber >= 18363)
 	{
 		const HINSTANCE hModule = LoadLibrary(TEXT("user32.dll"));
 		if (hModule)
@@ -111,9 +114,16 @@ int CImageBase::Create(CWnd* pWnd)
 	const BOOL bret = CDialog::Create(CImageBase::IDD, this);
 	RECT r = { 0,0,0,0 };
 	MoveWindow(&r);
-	if (bret == TRUE && savedata.aero == 1)
-		ShowWindow(SW_SHOW);
-
+	if (bret == TRUE && savedata.aero == 1) {
+		COSVersion os;
+		os.GetVersionString();
+		if (os.in.dwMajorVersion == 10 && os.in.dwBuildNumber >= 22000) {
+			ShowWindow(SW_HIDE);
+		}
+		else {
+			ShowWindow(SW_SHOW);
+		}
+	}
 	return bret;
 }
 
@@ -193,10 +203,15 @@ void CImageBase::OnPaint()
 	CPaintDC dc(this); // device context for painting
 					   // TODO: ここにメッセージ ハンドラー コードを追加します。
 					   // 描画メッセージで CDialogEx::OnPaint() を呼び出さないでください。
-	RECT rect;
-	GetClientRect(&rect);
-	CBrush brush(RGB(0, 0, 0));
-	GetDC()->FillRect(&rect, &brush);
+	COSVersion os;
+	os.GetVersionString();
+	if (os.in.dwMajorVersion == 10 && os.in.dwBuildNumber >= 22000){}
+	else {
+		RECT rect;
+		GetClientRect(&rect);
+		CBrush brush(RGB(0, 0, 0));
+		GetDC()->FillRect(&rect, &brush);
+	}
 }
 
 
@@ -235,7 +250,14 @@ void CImageBase::OnSize(UINT nType, int cx, int cy)
 		ShowWindow(SW_HIDE);
 	}
 	else {
-		ShowWindow(SW_SHOWNORMAL);
+		COSVersion os;
+		os.GetVersionString();
+		if (os.in.dwMajorVersion == 10 && os.in.dwBuildNumber >= 22000) {
+			ShowWindow(SW_HIDE);
+		}
+		else {
+			ShowWindow(SW_SHOWNORMAL);
+		}
 	}
 
 }
