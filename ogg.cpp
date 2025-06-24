@@ -188,7 +188,7 @@ BOOL COggApp::InitInstance()
 	if (savedata.ms < 30) savedata.ms = 30;
 	if (savedata.ms > 80) savedata.ms = 80;
 	if (savedata.aerocheck == 0) {
-		int abc = AfxMessageBox(L"エアロ(透過処理)がメイン画面等に実装されました。是非試してみて貰えれば。\n有効にしますか？(少し不安定な部分あります)\n(このメッセージは一回しか表示されません)", MB_YESNO);
+		int abc = AfxMessageBox(L"エアロ(透過処理)がメイン画面等に実装されました。是非試してみて貰えれば。\n有効にしますか？(少し不安定な部分あります)\n(このメッセージは一回しか表示されません)\nWindows11以降では、有効にしないで下さい。", MB_YESNO);
 		if (abc == IDYES) {
 			savedata.aero = 1;
 			savedata.aerocheck = 1;

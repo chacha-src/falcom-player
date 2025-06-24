@@ -675,17 +675,11 @@ void ConvertRawBytesToFloat(const std::vector<uint8_t>& raw_data,
 			out_float_data[i] = (float)i_val / 8388608.0f; // 2^23
 		}
 		else if (bits_per_sample == 32) {
-			// 32-bit float or 32-bit integer PCM
-			if (bytes_per_sample == sizeof(float)) { // 32-bit floatの場合
-				memcpy(&out_float_data[i], &raw_data[current_byte_pos], sizeof(float));
-			}
-			else { // 32-bit integer PCM (リトルエンディアン)
-				int32_t i_val = (int32_t)(raw_data[current_byte_pos] |
+			int32_t i_val = (int32_t)(raw_data[current_byte_pos] |
 					(raw_data[current_byte_pos + 1] << 8) |
 					(raw_data[current_byte_pos + 2] << 16) |
 					(raw_data[current_byte_pos + 3] << 24));
 				out_float_data[i] = (float)i_val / 2147483648.0f; // 2^31
-			}
 		}
 		else {
 			// 未対応ビット深度
@@ -735,17 +729,11 @@ void ConvertFloatToRawBytes(const std::vector<float>& float_data,
 			out_raw_data[current_byte_pos + 2] = (uint8_t)((i_val >> 16) & 0xFF);
 		}
 		else if (target_bits_per_sample == 32) {
-			// 32-bit float or 32-bit integer PCM
-			if (bytes_per_sample == sizeof(float)) { // floatの場合
-				memcpy(&out_raw_data[current_byte_pos], &sample_float, sizeof(float));
-			}
-			else { // 32-bit integer PCM (リトルエンディアン)
 				int32_t i_val = (int32_t)(sample_float * 2147483647.0f); // 2^31 - 1
 				out_raw_data[current_byte_pos] = (uint8_t)(i_val & 0xFF);
 				out_raw_data[current_byte_pos + 1] = (uint8_t)((i_val >> 8) & 0xFF);
 				out_raw_data[current_byte_pos + 2] = (uint8_t)((i_val >> 16) & 0xFF);
 				out_raw_data[current_byte_pos + 3] = (uint8_t)((i_val >> 24) & 0xFF);
-			}
 		}
 		else {
 			// 未対応ビット深度
