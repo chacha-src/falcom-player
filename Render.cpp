@@ -76,6 +76,7 @@ void CRender::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO3, m_Hz);
 	DDX_Control(pDX, IDC_STATIC12, m_wup);
 	DDX_Control(pDX, IDC_SLIDER6, w_wups);
+	DDX_Control(pDX, IDC_CHECK52, m_speana);
 }
 
 
@@ -113,6 +114,7 @@ BEGIN_MESSAGE_MAP(CRender, CDialog)
 	ON_WM_CREATE()
 	ON_WM_MOVING()
 	ON_BN_CLICKED(IDCANCEL, &CRender::OnBnClickedCancel)
+	ON_BN_CLICKED(IDC_CHECK52, &CRender::OnBnClickedCheck52)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -202,6 +204,7 @@ BOOL CRender::OnInitDialog()
 	m_tooltip.AddTool(GetDlgItem(IDC_CHECK48), _T("複数音声のある動画を再生する時に、再生前に\n音声ストリームの選択画面を表示します。\n通常ストリーム1がメインとして使われ、ストリーム2以降はコメンタリや英語音声などに使われています。"));
 	m_tooltip.AddTool(GetDlgItem(IDC_CHECK49), _T("対応しているkpiを24bit(ハイレゾ)で再生します。\n通常は16bitですが、まれに対応しているものがあります。\n音割れについては考慮されていないため、spcなど倍率を上げないといけないものは気をつけて下さい。"));
 	m_tooltip.AddTool(GetDlgItem(IDC_CHECK50), _T("m4aを内蔵エンジンで演奏します。"));
+	m_tooltip.AddTool(GetDlgItem(IDC_CHECK52), _T("スペアナの表示モードを切り替えます"));
 	m_tooltip.AddTool(GetDlgItem(IDC_SLIDER3), _T("演奏のバッファ処理での割り込み時間を設定します。\n少なすぎると音飛びする可能性があります。"));
 	m_tooltip.AddTool(GetDlgItem(IDC_SLIDER4), _T("描画の感覚時間を設定します。\nCPU使用が高いときに上げます。。"));
 	m_tooltip.SetDelayTime(TTDT_AUTOPOP, 10000);
@@ -218,6 +221,7 @@ BOOL CRender::OnInitDialog()
 	m_ffd.SetCheck(savedata.ffd);
 	m_vob.SetCheck(savedata.vob);
 	m_haali.SetCheck(savedata.haali);
+	m_speana.SetCheck(savedata.speanamode);
 	extern CPlayList* pl;
 	extern COggDlg* og;
 	extern int ip;
@@ -321,6 +325,8 @@ void CRender::OnOK()
 	savedata.m4a = m_m4a.GetCheck();
 	savedata.ms = m_ms.GetPos();
 	savedata.samples = samp[m_Hz.GetCurSel()];
+	savedata.speanamode = m_speana.GetCheck();
+
 	//	savedata.mp3orig=m_mp3orig.GetCheck();
 	if (savedata.aero)
 	delete renderbase;
@@ -584,6 +590,7 @@ void CRender::OnBnClickedOk()
 	savedata.bit32 = m_32bit.GetCheck();
 	savedata.m4a = m_m4a.GetCheck();
 	savedata.ms = m_ms.GetPos();
+	savedata.speanamode = m_speana.GetCheck();
 	extern int gameon;
 	if(savedata.aero)
 	delete renderbase;
@@ -970,4 +977,9 @@ void CRender::OnBnClickedCancel()
 
 	delete renderbase;
 	CDialogEx::OnCancel();
+}
+
+void CRender::OnBnClickedCheck52()
+{
+	// TODO: ここにコントロール通知ハンドラー コードを追加します。
 }

@@ -119,6 +119,8 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnMoving(UINT fwSide, LPRECT pRect);
 	afx_msg void OnBnClickedCancel();
+	afx_msg void OnBnClickedCheck52();
+	CButton m_speana;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -151,6 +151,7 @@
 #define IDC_CHECK51                     1028
 #define IDC_BUTTON17                    1029
 #define IDC_EDIT14                      1029
+#define IDC_CHECK52                     1029
 #define IDC_CHECK12                     1030
 #define IDC_EDIT15                      1030
 #define IDC_BUTTON19                    1031

@@ -40,6 +40,7 @@ public:
 	operator double() const { return getval(); }
 	Int24& operator =(const Int24& input) { copy(input); return *this; }
 	Int24& operator =(const int input) { setval(input); return *this; }
+	Int24& operator =(const long input) { setval(input); return *this; }
 
 	/***********************************************/
 
