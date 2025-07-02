@@ -192,6 +192,7 @@ struct save{
 	TCHAR playlistname[1000][256*2];
 
 	int speanamode;
+	int speananum;
 };
 
 

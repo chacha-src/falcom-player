@@ -155,6 +155,7 @@ BOOL COggApp::InitInstance()
 	savedata.wup = 1.0;
 	savedata.aerocheck = 0;
 	savedata.speanamode = 0;
+	savedata.speananum = 0;
 
 #if _UNICODE
 	if(GetKeyState(VK_CONTROL) < 0){

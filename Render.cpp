@@ -77,6 +77,7 @@ void CRender::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC12, m_wup);
 	DDX_Control(pDX, IDC_SLIDER6, w_wups);
 	DDX_Control(pDX, IDC_CHECK52, m_speana);
+	DDX_Control(pDX, IDC_COMBO4, m_speana_num);
 }
 
 
@@ -277,6 +278,12 @@ BOOL CRender::OnInitDialog()
 			break;
 		}
 	}
+
+	m_speana_num.AddString(L"•W€");
+	m_speana_num.AddString(L"ü”g‘Ñ");
+	m_speana_num.AddString(L"‰¹ŠK");
+	m_speana_num.SetCurSel(savedata.speananum);
+
 	if (savedata.aero){
 		renderbase = new CImageBase;
 	renderbase->Create(NULL);
@@ -326,6 +333,7 @@ void CRender::OnOK()
 	savedata.ms = m_ms.GetPos();
 	savedata.samples = samp[m_Hz.GetCurSel()];
 	savedata.speanamode = m_speana.GetCheck();
+	savedata.speananum = m_speana_num.GetCurSel();
 
 	//	savedata.mp3orig=m_mp3orig.GetCheck();
 	if (savedata.aero)
@@ -591,6 +599,7 @@ void CRender::OnBnClickedOk()
 	savedata.m4a = m_m4a.GetCheck();
 	savedata.ms = m_ms.GetPos();
 	savedata.speanamode = m_speana.GetCheck();
+	savedata.speananum = m_speana_num.GetCurSel();
 	extern int gameon;
 	if(savedata.aero)
 	delete renderbase;

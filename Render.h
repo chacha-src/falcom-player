@@ -121,6 +121,7 @@ public:
 	afx_msg void OnBnClickedCancel();
 	afx_msg void OnBnClickedCheck52();
 	CButton m_speana;
+	CComboBox m_speana_num;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -242,6 +242,7 @@
 #define IDC_PLAYDELETE                  1081
 #define IDC_STATIC12                    1082
 #define IDC_STATIC1                     1082
+#define IDC_COMBO4                      1083
 #define ID_MENUITEM32771                32771
 #define ID_MENUITEM32772                32772
 #define ID_MENUITEM32773                32773
@@ -424,7 +425,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        193
 #define _APS_NEXT_COMMAND_VALUE         32948
-#define _APS_NEXT_CONTROL_VALUE         1083
+#define _APS_NEXT_CONTROL_VALUE         1084
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
