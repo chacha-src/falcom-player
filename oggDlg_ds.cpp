@@ -596,8 +596,10 @@ bool ProcessAudioWithRubberBand(float tempoRate)
 	for (int ch = 0; ch < wavch; ++ch) {
 		outputChannelPointers[ch] = outputChannelData[ch].data();
 	}
-	Sleep(1);
+	//Sleep(1);
 	// すべての出力データを取得
+	int maxWait = 50; // 最大待機ループ数
+	int waitCount = 0;
 	while (true) {
 		int available = g_rubberBandStretcher->available();
 		if (available <= 0) break;
