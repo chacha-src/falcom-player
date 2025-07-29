@@ -460,7 +460,7 @@ UINT HandleNotifications(LPVOID)
 			if (len4 != 0)oldw2 = len4;
 		}
 		else if(m_dsb) {
-			m_dsb->Lock(oldw, len4, (LPVOID*)&pdsb1, (DWORD*)&len3, (LPVOID*)&pdsb2, (DWORD*)&len4, 0);
+			m_dsb->Lock(oldw, len1 + len2, (LPVOID*)&pdsb1, (DWORD*)&len3, (LPVOID*)&pdsb2, (DWORD*)&len4, 0);
 			thn = FALSE;
 			//Sleep(40);
 			ZeroMemory(pdsb1, len3);
@@ -597,9 +597,6 @@ bool ProcessAudioWithRubberBand(float tempoRate)
 		outputChannelPointers[ch] = outputChannelData[ch].data();
 	}
 	//Sleep(1);
-	// すべての出力データを取得
-	int maxWait = 50; // 最大待機ループ数
-	int waitCount = 0;
 	while (true) {
 		int available = g_rubberBandStretcher->available();
 		if (available <= 0) break;
@@ -607,8 +604,9 @@ bool ProcessAudioWithRubberBand(float tempoRate)
 		size_t samplesToRetrieve = (std::min)(static_cast<size_t>(available), chunkSize);
 		size_t samplesRetrieved = g_rubberBandStretcher->retrieve(outputChannelPointers.data(), samplesToRetrieve);
 
-		if (samplesRetrieved == 0) break;
-
+		if (samplesRetrieved == 0) {
+			break;
+		}
 		// チャンネルデータをインターリーブして出力バッファに追加
 		for (size_t i = 0; i < samplesRetrieved; ++i) {
 			for (int ch = 0; ch < wavch; ++ch) {
@@ -616,12 +614,6 @@ bool ProcessAudioWithRubberBand(float tempoRate)
 			}
 		}
 	}
-
-	// 結果の検証
-	if (m_convertedPcmFloatData.empty()) {
-		return false;
-	}
-
 	return true;
 }
 
